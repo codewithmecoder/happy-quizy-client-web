@@ -16,3 +16,9 @@ export type TypeQuestionUpdateModel = {
   photo: null | string;
   photoName: null | string;
 };
+
+export interface TypeQuestionValues {
+  type: string | null;
+  photo: null | string;
+  photoName?: null | string;
+}

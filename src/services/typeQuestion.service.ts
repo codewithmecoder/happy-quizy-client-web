@@ -4,8 +4,8 @@ import { MessageResponseModel } from '../models/messageResponse.model';
 import {
   TypeQuestionModel,
   TypeQuestionUpdateModel,
+  TypeQuestionValues,
 } from '../models/typeQuestion.model';
-import { TypeQuestionValues } from '../pages/typequestion';
 import { axiosInstance } from '../utils/axiosBase';
 import fetcher from '../utils/fetcher';
 
