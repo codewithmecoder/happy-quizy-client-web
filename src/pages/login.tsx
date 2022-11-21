@@ -33,11 +33,11 @@ const Login = () => {
 
   const mutation = useMutation(loginUser, {
     onSuccess: ({ data }) => {
-      if (data.data?.user?.isAdmin) {
+      if (data?.success) {
         setLoginErrorMessage('');
         router.push('/');
       } else {
-        setLoginErrorMessage('Only admin user can login to this!');
+        setLoginErrorMessage(data?.data?.message);
       }
     },
     onError(error: AxiosError) {

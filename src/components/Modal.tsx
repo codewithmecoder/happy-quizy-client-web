@@ -11,6 +11,7 @@ interface Props {
   visible: boolean;
   onClose: MouseEventHandler<HTMLDivElement>;
   innerDivClassname?: string;
+  notCloseOutsideClick?: boolean;
 }
 
 const Modal = ({
@@ -23,9 +24,10 @@ const Modal = ({
   visible,
   onClose,
   innerDivClassname,
+  notCloseOutsideClick,
 }: Props) => {
   const handleOnClose = (e: any) => {
-    if (e.target?.id === 'modal') onClose(e);
+    if (e.target?.id === 'modal' && !notCloseOutsideClick) onClose(e);
   };
 
   if (!visible) return null;

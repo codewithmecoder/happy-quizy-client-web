@@ -1,13 +1,15 @@
 import { useMutation } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import Link from 'next/link';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { ChangeEvent, FormEvent, useState } from 'react';
-import Checkbox from '../components/Checkbox';
 import InputForm from '../components/InputForm';
 import MyHead from '../components/MyHead';
 import PrimaryButton from '../components/PrimaryButton';
 import Welcome from '../components/Welcome';
 import { RegisterInterface } from '../models/auth.model';
+import { BaseResponse } from '../models/baseResponse.model';
+import { MessageResponseModel } from '../models/messageResponse.model';
 import { registerUser } from '../services/auth.service';
 
 const Register = () => {
@@ -20,21 +22,33 @@ const Register = () => {
     photo: '',
     isAdmin: false,
   };
-  // const [showHidePassword, setShowHidePassword] = useState(true);
+  const router = useRouter();
+  const [registerError, setRegisterError] = useState<string | null>(null);
   const [registerValues, setRegisterValues] =
     useState<RegisterInterface>(initialValues);
 
   const onchangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setRegisterValues({
       ...registerValues,
-      [e.target.name]:
-        e.target.type === 'checkbox' ? e.target.checked : e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
   const mutation = useMutation(registerUser, {
-    onSuccess: () => {
-      Router.push('/login');
+    onSuccess: ({ data }) => {
+      if (data?.success) {
+        router.push('/login');
+      } else {
+        setRegisterError(data?.data?.message);
+      }
+    },
+    onError: (e: AxiosError) => {
+      const data: BaseResponse<MessageResponseModel> = e.response?.data as any;
+      if (data?.data.message) {
+        setRegisterError(data.data.message);
+      } else {
+        setRegisterError(e.message);
+      }
     },
   });
 
@@ -105,7 +119,11 @@ const Register = () => {
           required={true}
           type="password"
         />
-        <Checkbox label="Admin" onChange={onchangeHandler} name="isAdmin" />
+        {registerError && (
+          <div className="my-2">
+            <li className="text-red-500">{registerError}</li>
+          </div>
+        )}
         <div className="flex items-center justify-center w-full mt-5">
           <PrimaryButton
             type="submit"
