@@ -16,12 +16,32 @@ const Quiz: NextPage<{
   const router = useRouter();
   const [startModal, setStartModal] = useState(true);
   const { id } = router.query;
+
+  const getTimeRemaining = (endTime: number) => {
+    const now = Date.now();
+    const total = endTime - now;
+    console.log(total);
+  };
+  // useEffect(() => {
+  //   first
+
+  //   return () => {
+  //     second
+  //   }
+  // }, [third])
+
   return (
     <>
       <div className="md:max-w-[80%] w-[100%] lg:max-w-[60%] m-auto items-center justify-center flex flex-col">
         <MyHead title="Happy Quizy - Quiz" />
-        <div>
-          Quiz {`=>`} {id}
+        <div
+          onClick={() =>
+            getTimeRemaining(
+              new Date().setSeconds(new Date().getSeconds() + 10)
+            )
+          }
+        >
+          Hello
         </div>
       </div>
       <Modal
