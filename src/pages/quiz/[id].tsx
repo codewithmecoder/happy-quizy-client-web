@@ -1,12 +1,14 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DangerButton from '../../components/DangerButton';
 import Modal from '../../components/Modal';
 import MyHead from '../../components/MyHead';
 import PrimaryButton from '../../components/PrimaryButton';
+import useTimer from '../../hooks/timer-hook';
 import { BaseResponse } from '../../models/baseResponse.model';
 import fetcher from '../../utils/fetcher';
+import { getDeadLineTimer } from '../../utils/getDeadlineTimer';
 
 const Quiz: NextPage<{
   headers: Partial<{
@@ -16,32 +18,30 @@ const Quiz: NextPage<{
   const router = useRouter();
   const [startModal, setStartModal] = useState(true);
   const { id } = router.query;
-
-  const getTimeRemaining = (endTime: number) => {
-    const now = Date.now();
-    const total = endTime - now;
-    console.log(total);
-  };
-  // useEffect(() => {
-  //   first
-
-  //   return () => {
-  //     second
-  //   }
-  // }, [third])
+  const intervalRef = useRef<NodeJS.Timer | null>(null);
+  const intervalRefEachQuestion = useRef<NodeJS.Timer | null>(null);
+  const [questionTimer, setQuestionTimer] = useState('00:00:00');
+  const [timer, setTimer] = useState('00:00:00');
+  const defualtTimeDisplayEachQuestion = '00:00:10';
+  const defualtTimeDisplay = '00:20:00';
+  const {
+    isTimeOut: isEachQuestionTimeOut,
+    clearTimer: clearTimerEacherQuestion,
+  } = useTimer(setQuestionTimer, intervalRefEachQuestion);
+  const { isTimeOut, clearTimer } = useTimer(setTimer, intervalRef);
 
   return (
     <>
       <div className="md:max-w-[80%] w-[100%] lg:max-w-[60%] m-auto items-center justify-center flex flex-col">
         <MyHead title="Happy Quizy - Quiz" />
-        <div
-          onClick={() =>
-            getTimeRemaining(
-              new Date().setSeconds(new Date().getSeconds() + 10)
-            )
-          }
-        >
+        <div>
           Hello
+          <p className="text-white">
+            {isEachQuestionTimeOut ? 'True' : 'False'},{' '}
+            {isTimeOut ? 'True' : 'False'}
+          </p>
+          <p className="text-white">{timer}</p>
+          <p className="text-white">{questionTimer}</p>
         </div>
       </div>
       <Modal
@@ -73,7 +73,20 @@ const Quiz: NextPage<{
               <PrimaryButton
                 text="Start The Quiz"
                 type="button"
-                onClick={() => setStartModal(false)}
+                onClick={() => {
+                  setStartModal(false);
+                  if (intervalRefEachQuestion.current)
+                    clearInterval(intervalRefEachQuestion.current);
+                  clearTimerEacherQuestion(
+                    getDeadLineTimer({ seconds: 10 }),
+                    defualtTimeDisplayEachQuestion
+                  );
+                  if (intervalRef.current) clearInterval(intervalRef.current);
+                  clearTimer(
+                    getDeadLineTimer({ mins: 20 }),
+                    defualtTimeDisplay
+                  );
+                }}
               />
             </div>
           </div>
