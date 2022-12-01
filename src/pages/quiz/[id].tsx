@@ -5,7 +5,8 @@ import DangerButton from '../../components/DangerButton';
 import Modal from '../../components/Modal';
 import MyHead from '../../components/MyHead';
 import PrimaryButton from '../../components/PrimaryButton';
-import useTimer from '../../hooks/timer-hook';
+import useTimer from '../../hooks/useTimer';
+import useUnload from '../../hooks/useUnload';
 import { BaseResponse } from '../../models/baseResponse.model';
 import fetcher from '../../utils/fetcher';
 import { getDeadLineTimer } from '../../utils/getDeadlineTimer';
@@ -22,26 +23,55 @@ const Quiz: NextPage<{
   const intervalRefEachQuestion = useRef<NodeJS.Timer | null>(null);
   const [questionTimer, setQuestionTimer] = useState('00:00:00');
   const [timer, setTimer] = useState('00:00:00');
-  const defualtTimeDisplayEachQuestion = '00:00:10';
+  const defualtTimeDisplayEachQuestion = '00:00:20';
   const defualtTimeDisplay = '00:20:00';
   const {
     isTimeOut: isEachQuestionTimeOut,
     clearTimer: clearTimerEacherQuestion,
+    total: totalEachQuestion,
   } = useTimer(setQuestionTimer, intervalRefEachQuestion);
-  const { isTimeOut, clearTimer } = useTimer(setTimer, intervalRef);
+  const { isTimeOut, clearTimer, total } = useTimer(setTimer, intervalRef);
+
+  useUnload((e: any) => {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  // useEffect(() => {
+  //   router.beforePopState(((e: any) => {
+  //     console.log(e);
+  //     e.as = '/quiz/' + id;
+  //     e.url = '/quiz/' + id;
+  //   }) as any);
+  // }, []);
 
   return (
     <>
       <div className="md:max-w-[80%] w-[100%] lg:max-w-[60%] m-auto items-center justify-center flex flex-col">
         <MyHead title="Happy Quizy - Quiz" />
-        <div>
-          Hello
-          <p className="text-white">
-            {isEachQuestionTimeOut ? 'True' : 'False'},{' '}
-            {isTimeOut ? 'True' : 'False'}
-          </p>
-          <p className="text-white">{timer}</p>
-          <p className="text-white">{questionTimer}</p>
+        <div className="flex items-center w-full p-5 justify-between">
+          <div className="flex items-center gap-3">
+            <p className="text-white font-semibold">Total Time: </p>
+            <p
+              className={`${
+                total > 0 && total < 60000 ? 'text-red-500' : 'text-white'
+              } font-bold`}
+            >
+              {timer}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <p className="text-white font-semibold">Question Time: </p>
+            <p
+              className={`${
+                totalEachQuestion > 0 && totalEachQuestion < 10000
+                  ? 'text-red-500'
+                  : 'text-white'
+              } font-bold`}
+            >
+              {questionTimer}
+            </p>
+          </div>
         </div>
       </div>
       <Modal
@@ -78,7 +108,7 @@ const Quiz: NextPage<{
                   if (intervalRefEachQuestion.current)
                     clearInterval(intervalRefEachQuestion.current);
                   clearTimerEacherQuestion(
-                    getDeadLineTimer({ seconds: 10 }),
+                    getDeadLineTimer({ seconds: 20 }),
                     defualtTimeDisplayEachQuestion
                   );
                   if (intervalRef.current) clearInterval(intervalRef.current);

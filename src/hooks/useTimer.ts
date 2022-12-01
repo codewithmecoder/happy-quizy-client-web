@@ -5,6 +5,7 @@ const useTimer = (
   intervalRef: MutableRefObject<NodeJS.Timer | null>
 ) => {
   const [isTimeOut, setIsTimeOut] = useState<boolean>(false);
+  const [total, setTotal] = useState<number>(0);
   const getTimeRemaining = (endTime: number) => {
     const now = Date.now();
     const total = endTime - now;
@@ -17,6 +18,7 @@ const useTimer = (
 
   const startTimer = (deadLine: number) => {
     let { total, days, hours, mins, seconds } = getTimeRemaining(deadLine);
+    setTotal(total);
     if (total >= 0) {
       const _hours = hours > 9 ? hours : `0${hours}`;
       const _mins = mins > 9 ? mins : `0${mins}`;
@@ -40,7 +42,7 @@ const useTimer = (
     intervalRef.current = id;
   };
 
-  return { isTimeOut, clearTimer };
+  return { isTimeOut, clearTimer, total };
 
   // const resetTimer = () => {
   //   if (intervalRef.current) clearInterval(intervalRef.current);
