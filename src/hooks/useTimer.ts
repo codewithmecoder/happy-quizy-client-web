@@ -17,7 +17,7 @@ const useTimer = (
   };
 
   const startTimer = (deadLine: number) => {
-    let { total, days, hours, mins, seconds } = getTimeRemaining(deadLine);
+    let { total, hours, mins, seconds } = getTimeRemaining(deadLine);
     setTotal(total);
     if (total >= 0) {
       const _hours = hours > 9 ? hours : `0${hours}`;
