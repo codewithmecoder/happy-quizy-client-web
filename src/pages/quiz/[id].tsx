@@ -96,7 +96,7 @@ const Quiz: NextPage<{
   };
   useEffect(() => {
     if (isEachQuestionTimeOut) nextQuestion();
-  }, [isEachQuestionTimeOut]);
+  }, [isEachQuestionTimeOut, nextQuestion]);
 
   // useEffect(() => {
   //   if (indexQuestion === Constants.apps.maxQuestions + 1) console.log('Done');
