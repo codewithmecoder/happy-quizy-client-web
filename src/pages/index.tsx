@@ -13,7 +13,7 @@ const Home: NextPage<{
   }>;
 }> = ({ headers }) => {
   const { data, isError, isLoading, isSuccess } = useQuery(
-    [Constants.queries.typeQuestion],
+    [Constants.queries.typeQuestions],
     async () => await fetchOnlyTypeQuestions(headers)
   );
   return (

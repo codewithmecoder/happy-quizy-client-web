@@ -43,6 +43,19 @@ export const fetchOnlyTypeQuestions = (
   );
 };
 
+export const fetchTypeQuestionsById = (
+  id: number,
+  headers: Partial<{ [key: string]: string }>
+) => {
+  return fetcher<BaseResponse<TypeQuestionModel | MessageResponseModel>>(
+    `/api/v1/typeQuestion/${id}`,
+    {
+      Authorization: `Bearer ${headers.accessToken}`,
+      'x-refresh': headers.refreshToken,
+    }
+  );
+};
+
 export const updateTypeQuestion = (typeQuestionUpdate: void) => {
   const obj: BaseObjectRequestModel<TypeQuestionUpdateModel> =
     typeQuestionUpdate as any;

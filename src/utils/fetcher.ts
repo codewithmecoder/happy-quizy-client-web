@@ -7,8 +7,8 @@ const fetcher = async <T>(url: string, headers = {}): Promise<T | null> => {
     });
 
     return data;
-  } catch (e) {
-    return null;
+  } catch (e: any) {
+    return e?.response?.data;
   }
 };
 
